@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+    <meta charset="UTF-8">
+    <title>Генератор пакетов</title>
+    <script>
+        var mem_name;
+        var packet_name = '';
+        function choosePacket(packet) {
+            packet_name = packet.id;
+        }
+        function showTCP(nav) {
+            document.getElementById('type_of_protocol').value = '0';
+            document.getElementById('send_btn').disabled = false;
+            document.getElementById('protocol').style.backgroundColor = 'grey';
+            document.getElementById(nav.id).classList.add('active');
+            document.getElementById('UDP').classList.remove('active');
+            document.getElementById('ICMP').classList.remove('active');
+            document.getElementById('protocol').innerHTML = "<div class=\"row\">\n" +
+                "                <div class=\"col\"> <input onkeyup=\"validDigit(this)\" class=\"form-control\" id=\"src_port_tcp\" name=\"src_port_tcp\" placeholder=\"Порт отправителя\"></div>\n" +
+                "                <div class=\"col\"> <input onkeyup=\"validDigit(this)\" class=\"form-control\" id=\"dst_port_tcp\" name=\"dst_port_tcp\" placeholder=\"Порт получателя\"></div>\n" +
+                "            </div>\n" +
+                "            <br>\n" +
+                "            <div class=\"row\">\n" +
+                "                <div class=\"col\"> <input onclick=\"mem_name=this.placeholder\" onkeyup=\"validDigit(this)\" class=\"form-control\" id=\"num_seq_tcp\" name=\"num_seq_tcp\" placeholder=\"Номер последовательности\"></div>\n" +
+                "                <div class=\"col\"> <input onclick=\"mem_name=this.placeholder\" onkeyup=\"validDigit(this)\" class=\"form-control\" id=\"num_ack_tcp\" name=\"num_ack_tcp\" placeholder=\"Номер подтверждения\"></div>\n" +
+                "                <div class=\"col\"> <input onclick=\"mem_name=this.placeholder\" onkeyup=\"validDigit(this)\" class=\"form-control\" id=\"offset_tcp\" name=\"offset_tcp\" placeholder=\"Значение сдвига\"></div>\n" +
+                "                <div class=\"col\"> <input onclick=\"mem_name=this.placeholder\" onkeyup=\"validDigit(this)\" class=\"form-control\" id=\"reserv_tcp\" name=\"reserv_tcp\" placeholder=\"Резерв\"></div>\n" +
+                "            </div>\n" +
+                "            <div class=\"row\">\n" +
+                "            <div class=\"col\"><div class=\"form-check\"><input onchange=\"lockField(this)\" type=\"checkbox\" class=\"form-check-input\" id=\"num_seq_tcp_check\"><label class=\"form-check-label\" for=\"num_seq_tcp_check\">Автоматом (номер последовательности)</label></div></div>\n" +
+                "            <div class=\"col\"><div class=\"form-check\"><input onchange=\"lockField(this)\" type=\"checkbox\" class=\"form-check-input\" id=\"num_ack_tcp_check\"><label class=\"form-check-label\" for=\"num_ack_tcp_check\">Автоматом (номер подстверждения)</label></div></div>\n" +
+                "            <div class=\"col\"><div class=\"form-check\"><input onchange=\"lockField(this)\" type=\"checkbox\" class=\"form-check-input\" id=\"offset_tcp_check\"><label class=\"form-check-label\" for=\"offset_tcp_check\">Автоматом (значение сдвига)</label></div></div>\n" +
+                "            <div class=\"col\"><div class=\"form-check\"><input onchange=\"lockField(this)\" type=\"checkbox\" class=\"form-check-input\" id=\"reserv_tcp_check\"><label class=\"form-check-label\" for=\"reserv_tcp_check\">Автоматом (резерв)</label></div></div>\n" +
+                "            </div>\n" +
+                "            <br>\n" +
+                "            <div class=\"row\">\n" +
+                "                <div class=\"col\"> <input title=\"1 - FIN\n2 - SYN\n4 - RST\n8 - PSH\n16 - ACK\n32 - URG\" onclick=\"mem_name=this.placeholder\" onkeyup=\"validDigit(this)\" class=\"form-control\" id=\"flags_tcp\" name=\"flags_tcp\" placeholder=\"Флаги\"></div>\n" +
+                "                <div class=\"col\"> <input onclick=\"mem_name=this.placeholder\" onkeyup=\"validDigit(this)\" class=\"form-control\" id=\"size_win_tcp\" name=\"size_win_tcp\" placeholder=\"Размер окна\"></div>\n" +
+                "                <div class=\"col\"> <input onclick=\"mem_name=this.placeholder\" onkeyup=\"validDigit(this)\" class=\"form-control\" id=\"crc_tcp\" name=\"crc_tcp\" placeholder=\"Контрольная сумма\"></div>\n" +
+                "                <div class=\"col\"> <input onclick=\"mem_name=this.placeholder\" onkeyup=\"validDigit(this)\" class=\"form-control\" id=\"ptr_tcp\" name=\"ptr_tcp\" placeholder=\"Указатель срочности\"></div>\n" +
+                "            </div>\n" +
+                "            <div class=\"row\">\n" +
+                "            <div class=\"col\"><div class=\"form-check\"><input onchange=\"lockField(this)\" type=\"checkbox\" class=\"form-check-input\" id=\"flags_tcp_check\"><label class=\"form-check-label\" for=\"flags_tcp_check\">Автоматом (флаги)</label></div></div>\n" +
+                "            <div class=\"col\"><div class=\"form-check\"><input onchange=\"lockField(this)\" type=\"checkbox\" class=\"form-check-input\" id=\"size_win_tcp_check\"><label class=\"form-check-label\" for=\"size_win_tcp_check\">Автоматом (размер окна)</label></div></div>\n" +
+                "            <div class=\"col\"><div class=\"form-check\"><input onchange=\"lockField(this)\" type=\"checkbox\" class=\"form-check-input\" id=\"crc_tcp_check\"><label class=\"form-check-label\" for=\"crc_tcp_check\">Автоматом (контрольная сумма)</label></div></div>\n" +
+                "            <div class=\"col\"><div class=\"form-check\"><input onchange=\"lockField(this)\" type=\"checkbox\" class=\"form-check-input\" id=\"ptr_tcp_check\"><label class=\"form-check-label\" for=\"ptr_tcp_check\">Автоматом (указатель срочности)</label></div></div>\n" +
+                "            </div>"+
+            "            <br>\n" +
+                 "            <div class=\"row\">\n" +
+                 "            <div class=\"col\"><input class=\"form-control\" id=\"data_tcp\" name=\"data_tcp\" placeholder=\"Данные\"></div>\n" +
+                 "            </div>";
+        }
+        function showUDP(nav) {
+             document.getElementById('type_of_protocol').value = '1';
+            document.getElementById('send_btn').disabled = false;
+            document.getElementById('protocol').style.backgroundColor = 'grey';
+             document.getElementById(nav.id).classList.add('active');
+             document.getElementById('TCP').classList.remove('active');
+             document.getElementById('ICMP').classList.remove('active');
+             document.getElementById('protocol').innerHTML = "<div class=\"row\">\n" +
+                 "            <div class=\"col\"><input  class=\"form-control\" id=\"src_port_udp\" name=\"src_port_udp\" placeholder=\"Порт отправителя\"></div>\n" +
+                 "            <div class=\"col\"><input  class=\"form-control\" id=\"dst_port_udp\" name=\"dst_port_udp\" placeholder=\"Порт получателя\"></div>\n" +
+                 "            </div>\n" +
+                 "            <br>\n" +
+                 "            <div class=\"row\">\n" +
+                 "            <div class=\"col\"><input onclick=\"mem_name=this.placeholder\" onkeyup=\"validDigit(this)\" class=\"form-control\" id=\"len_udp\" name=\"len_udp\" placeholder=\"Длина дейтаграммы\"></div>\n" +
+                 "            <div class=\"col\"><input onclick=\"mem_name=this.placeholder\" onkeyup=\"validDigit(this)\" class=\"form-control\" id=\"crc_udp\" name=\"crc_udp\" placeholder=\"Контрольная сумма\"></div>\n" +
+                 "            </div>\n" +
+                 "            <div class=\"row\">\n" +
+                 "            <div class=\"col\"><div class=\"form-check\"><input onchange=\"lockField(this)\" type=\"checkbox\" class=\"form-check-input\" id=\"len_udp_check\"><label class=\"form-check-label\" for=\"len_udp_check\">Автоматом (длина дейтаграммы)</label></div></div>\n" +
+                 "            <div class=\"col\"><div class=\"form-check\"><input onchange=\"lockField(this)\" type=\"checkbox\" class=\"form-check-input\" id=\"crc_udp_check\"><label class=\"form-check-label\" for=\"crc_udp_check\">Автоматом (контрольная сумма)</label></div></div>\n" +
+                 "            </div>"+
+              "            <br>\n" +
+                 "            <div class=\"row\">\n" +
+                 "            <div class=\"col\"><input class=\"form-control\" id=\"data_udp\" name=\"data_udp\" placeholder=\"Данные\"></div>\n" +
+                 "            </div>";
+        }
+        function showICMP(nav) {
+             document.getElementById('type_of_protocol').value = '2';
+            document.getElementById('send_btn').disabled = false;
+            document.getElementById('protocol').style.backgroundColor = 'grey';
+             document.getElementById(nav.id).classList.add('active');
+             document.getElementById('UDP').classList.remove('active');
+             document.getElementById('TCP').classList.remove('active');
+             document.getElementById('protocol').innerHTML = "<div class=\"row\">\n" +
+                 "            <div class=\"col\"> <input title=\"0 - Echo Reply\n8 - Echo Request\" onclick=\"mem_name=this.placeholder\" onkeyup=\"validDigit(this)\" class=\"form-control\" id=\"type_icmp\" name=\"type_icmp\" placeholder=\"Тип\"></div>\n" +
+                 "            <div class=\"col\"><input onclick=\"mem_name=this.placeholder\" onkeyup=\"validDigit(this)\" class=\"form-control\" id=\"code_icmp\" name=\"code_icmp\" placeholder=\"Код\"></div>\n" +
+                 "            <div class=\"col\"><input onclick=\"mem_name=this.placeholder\" onkeyup=\"validDigit(this)\" class=\"form-control\" id=\"crc_icmp\" name=\"crc_icmp\" placeholder=\"Контрольная сумма\"></div>\n" +
+                 "        </div>\n" +
+                 "        <div class=\"row\">\n" +
+                 "            <div class=\"col\"><div class=\"form-check\"><input onchange=\"lockField(this)\" type=\"checkbox\" class=\"form-check-input\" id=\"type_icmp_check\"><label class=\"form-check-label\" for=\"type_icmp_check\">Автоматом (тип)</label></div></div>\n" +
+                 "            <div class=\"col\"><div class=\"form-check\"><input onchange=\"lockField(this)\" type=\"checkbox\" class=\"form-check-input\" id=\"code_icmp_check\"><label class=\"form-check-label\" for=\"code_icmp_check\">Автоматом (код)</label></div></div>\n" +
+                 "            <div class=\"col\"><div class=\"form-check\"><input onchange=\"lockField(this)\" type=\"checkbox\" class=\"form-check-input\" id=\"crc_icmp_check\"><label class=\"form-check-label\" for=\"crc_icmp_check\">Автоматом (контрольная сумма)</label></div></div>\n" +
+                 "        </div>\n" +
+                 "            <br>\n" +
+                 "            <div class=\"row\">\n" +
+                 "            <div class=\"col\"><input class=\"form-control\" id=\"data_icmp\" name=\"data_icmp\" placeholder=\"Данные\"></div>\n" +
+                 "            </div>";
+        }
+        function validDigit(field) {
+            if (field.value.match(/[^[0-9]/) != null && field.value)
+            {
+                document.getElementById(field.id).value = '';
+                document.getElementById(field.id).placeholder = 'Введите цифры';
+            }
+            else
+                document.getElementById(field.id).placeholder = mem_name;
+        }
+        function isIP(field) {
+            if(field.value.match(/^(?:1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])(?:\.(?:1?[0-9]{1,2}|2[0-4][0-9]|25[0-5])){3}(?::(?:[0-9]{1,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]))?$/)==null){
+                document.getElementById(field.id).value = '';
+                document.getElementById(field.id).placeholder = 'Некорректный IP-адрес';
+            }
+
+        }
+        function lockField(check_bar) {
+            id_name = check_bar.id.replace('_check','');
+            if (check_bar.checked) {
+                document.getElementById(id_name).disabled = true;
+                document.getElementById(id_name).value = '';
+            }
+            else {
+                document.getElementById(id_name).disabled = false;
+            }
+        }
+        function refreshList() {
+            $.ajax({
+            url: '/refreshList/',
+            dataType : "html",
+            success: function (data) {
+                document.getElementById("interfaces_list").innerHTML = data;
+                putNotification('Удачно','интерфейсы обновлены','ok')
+    },
+            beforeSend: function () {
+                putNotification('Подождите','идет обновление интерфейсов','inf')
+            },
+            error: function () {
+                putNotification('Ошибка','не удалось обновить интерфейсы','err')
+            }
+});
+        }
+
+            function getCookie(name) {
+                let matches = document.cookie.match(new RegExp(
+    "(?:^|; )" + name.replace(/([\.$?*|{}\(\)\[\]\\\/\+^])/g, '\\$1') + "=([^;]*)"
+  ));
+  return matches ? decodeURIComponent(matches[1]) : undefined;
+            }
+            var csrftoken = getCookie('csrftoken');
+
+            function csrfSafeMethod(method) {
+                // these HTTP methods do not require CSRF protection
+                return (/^(GET|HEAD|OPTIONS|TRACE)$/.test(method));
+            }
+        function sendPacket() {
+            var proto = document.getElementById('type_of_protocol').value;
+            if ( proto !== '-1')
+            {
+                if( proto === '0')
+                {
+                    $.ajax({
+                url: '/sendPacket/',
+                method: 'post',
+                dataType : "html",
+                data: { 'interfaces_list': document.getElementById('interfaces_list').value,
+                    'version_ip': document.getElementById('version_ip').value,
+                    'len_ip': document.getElementById('len_ip').value,
+                    'type_service_ip': document.getElementById('type_service_ip').value,
+                    'all_len_ip': document.getElementById('version_ip').value,
+                    'id_ip': document.getElementById('id_ip').value,
+                    'flags_ip': document.getElementById('flags_ip').value,
+                    'offset_ip': document.getElementById('offset_ip').value,
+                    'ttl_ip': document.getElementById('ttl_ip').value,
+                    'num_ip': document.getElementById('num_ip').value,
+                    'crc_ip': document.getElementById('crc_ip').value,
+                    'src_ip': document.getElementById('src_ip').value,
+                    'dst_ip': document.getElementById('dst_ip').value,
+                    'src_port_tcp': document.getElementById('src_port_tcp').value,
+                    'dst_port_tcp': document.getElementById('dst_port_tcp').value,
+                    'type_of_protocol': document.getElementById('type_of_protocol').value,
+                    'num_seq_tcp': document.getElementById('num_seq_tcp').value,
+                    'num_ack_tcp': document.getElementById('num_ack_tcp').value,
+                    'offset_tcp': document.getElementById('offset_tcp').value,
+                    'reserv_tcp': document.getElementById('reserv_tcp').value,
+                    'flags_tcp': document.getElementById('flags_tcp').value,
+                    'size_win_tcp': document.getElementById('size_win_tcp').value,
+                    'crc_tcp': document.getElementById('crc_tcp').value,
+                    'ptr_tcp': document.getElementById('ptr_tcp').value,
+                    'data_tcp': document.getElementById('data_tcp').value,
+                },
+                success: function (data) {
+                    if(data !== 'Error')
+                    putNotification('Удачно','TCP-пакет отправлен','ok');
+                    else
+                        putNotification('Ошибка','TCP-пакет не удалось отправить','err');
+                },
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                    putNotification('Подождите','идет отправление TCP-пакета','inf')
+                },
+                error: function () {
+                    putNotification('Ошибка','TCP-пакет не удалось отправить','err')
+
+                }
+});
+                }
+                else if(proto === '1')
+                {
+                    $.ajax({
+                url: '/sendPacket/',
+                method: 'post',
+                dataType : "html",
+                data: { 'interfaces_list': document.getElementById('interfaces_list').value,
+                    'version_ip': document.getElementById('version_ip').value,
+                    'len_ip': document.getElementById('len_ip').value,
+                    'type_service_ip': document.getElementById('type_service_ip').value,
+                    'all_len_ip': document.getElementById('version_ip').value,
+                    'id_ip': document.getElementById('id_ip').value,
+                    'flags_ip': document.getElementById('flags_ip').value,
+                    'offset_ip': document.getElementById('offset_ip').value,
+                    'ttl_ip': document.getElementById('ttl_ip').value,
+                    'num_ip': document.getElementById('num_ip').value,
+                    'crc_ip': document.getElementById('crc_ip').value,
+                    'src_ip': document.getElementById('src_ip').value,
+                    'dst_ip': document.getElementById('dst_ip').value,
+                    'type_of_protocol': document.getElementById('type_of_protocol').value,
+                    'src_port_udp': document.getElementById('src_port_udp').value,
+                    'dst_port_udp': document.getElementById('dst_port_udp').value,
+                    'len_udp': document.getElementById('len_udp').value,
+                    'crc_udp': document.getElementById('crc_udp').value,
+                    'data_udp': document.getElementById('data_udp').value,
+                },
+                success: function (data) {
+                    if(data !== 'Error')
+                    putNotification('Удачно','UDP-пакет отправлен','ok');
+                    else
+                        putNotification('Ошибка','UDP-пакет не удалось отправить','err');
+                },
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                    putNotification('Подождите','UDP-идет отправка пакета','inf')
+                },
+                error: function () {
+                    putNotification('Ошибка','UDP-пакет не удалось отправить','err')
+
+                }
+});
+                }
+                else if(proto === '2')
+                {
+                    $.ajax({
+                url: '/sendPacket/',
+                method: 'post',
+                dataType : "html",
+                data: { 'interfaces_list': document.getElementById('interfaces_list').value,
+                    'version_ip': document.getElementById('version_ip').value,
+                    'len_ip': document.getElementById('len_ip').value,
+                    'type_service_ip': document.getElementById('type_service_ip').value,
+                    'all_len_ip': document.getElementById('version_ip').value,
+                    'id_ip': document.getElementById('id_ip').value,
+                    'flags_ip': document.getElementById('flags_ip').value,
+                    'offset_ip': document.getElementById('offset_ip').value,
+                    'ttl_ip': document.getElementById('ttl_ip').value,
+                    'num_ip': document.getElementById('num_ip').value,
+                    'crc_ip': document.getElementById('crc_ip').value,
+                    'src_ip': document.getElementById('src_ip').value,
+                    'dst_ip': document.getElementById('dst_ip').value,
+                    'type_of_protocol': document.getElementById('type_of_protocol').value,
+                    'type_icmp': document.getElementById('type_icmp').value,
+                    'code_icmp': document.getElementById('code_icmp').value,
+                    'crc_icmp': document.getElementById('crc_icmp').value,
+                    'data_icmp': document.getElementById('data_icmp').value,
+                },
+                success: function (data) {
+                    if(data !== 'Error')
+                    putNotification('Удачно','ICMP-пакет отправлен','ok');
+                    else
+                        putNotification('Ошибка','ICMP-пакет не удалось отправить','err');
+                },
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                    putNotification('Подождите','идет отправка ICMP-пакета','inf')
+                },
+                error: function () {
+                    putNotification('Ошибка','ICMP-пакет не удалось отправить','err')
+
+                }
+});
+                }
+            }
+            else
+                putNotification('Ошибка','выберите TCP/UDP/ICMP','err')
+        }
+        function safePacket() {
+            var proto = document.getElementById('type_of_protocol').value;
+            if ( proto !== '-1')
+            {
+                if( proto === '0')
+                {
+                    $.ajax({
+                url: '/safePacket/',
+                method: 'get',
+                dataType : "html",
+                data: { 'version_ip': document.getElementById('version_ip').value,
+                    'len_ip': document.getElementById('len_ip').value,
+                    'type_service_ip': document.getElementById('type_service_ip').value,
+                    'all_len_ip': document.getElementById('version_ip').value,
+                    'id_ip': document.getElementById('id_ip').value,
+                    'flags_ip': document.getElementById('flags_ip').value,
+                    'offset_ip': document.getElementById('offset_ip').value,
+                    'ttl_ip': document.getElementById('ttl_ip').value,
+                    'num_ip': document.getElementById('num_ip').value,
+                    'crc_ip': document.getElementById('crc_ip').value,
+                    'src_ip': document.getElementById('src_ip').value,
+                    'dst_ip': document.getElementById('dst_ip').value,
+                    'src_port_tcp': document.getElementById('src_port_tcp').value,
+                    'dst_port_tcp': document.getElementById('dst_port_tcp').value,
+                    'type_of_protocol': document.getElementById('type_of_protocol').value,
+                    'num_seq_tcp': document.getElementById('num_seq_tcp').value,
+                    'num_ack_tcp': document.getElementById('num_ack_tcp').value,
+                    'offset_tcp': document.getElementById('offset_tcp').value,
+                    'reserv_tcp': document.getElementById('reserv_tcp').value,
+                    'flags_tcp': document.getElementById('flags_tcp').value,
+                    'size_win_tcp': document.getElementById('size_win_tcp').value,
+                    'crc_tcp': document.getElementById('crc_tcp').value,
+                    'ptr_tcp': document.getElementById('ptr_tcp').value,
+                    'data_tcp': document.getElementById('data_tcp').value,
+                },
+                success: function (data) {
+                    if(data !== 'Error') {
+                        if(document.getElementById('empty_field'))
+                            document.getElementById('empty_field').remove();
+                        document.getElementById('packets_queue').innerHTML += "<span class=\"dropdown-item\" id=\""+data+"\" style=\"cursor: default\">"+data+"</span>";
+                        putNotification('Удачно', 'пакет сохранен', 'ok');
+                    }
+                    else
+                        putNotification('Ошибка','пакет не удалось сохранить','err');
+                },
+                beforeSend: function () {
+                    putNotification('Подождите','идет сохранение пакета','inf')
+                },
+                error: function () {
+                    putNotification('Ошибка','пакет не удалось сохранить','err')
+
+                }
+});
+                }
+                else if(proto === '1')
+                {
+                    $.ajax({
+                url: '/safePacket/',
+                method: 'get',
+                dataType : "html",
+                data: { 'version_ip': document.getElementById('version_ip').value,
+                    'len_ip': document.getElementById('len_ip').value,
+                    'type_service_ip': document.getElementById('type_service_ip').value,
+                    'all_len_ip': document.getElementById('version_ip').value,
+                    'id_ip': document.getElementById('id_ip').value,
+                    'flags_ip': document.getElementById('flags_ip').value,
+                    'offset_ip': document.getElementById('offset_ip').value,
+                    'ttl_ip': document.getElementById('ttl_ip').value,
+                    'num_ip': document.getElementById('num_ip').value,
+                    'crc_ip': document.getElementById('crc_ip').value,
+                    'src_ip': document.getElementById('src_ip').value,
+                    'dst_ip': document.getElementById('dst_ip').value,
+                    'type_of_protocol': document.getElementById('type_of_protocol').value,
+                    'src_port_udp': document.getElementById('src_port_udp').value,
+                    'dst_port_udp': document.getElementById('dst_port_udp').value,
+                    'len_udp': document.getElementById('len_udp').value,
+                    'crc_udp': document.getElementById('crc_udp').value,
+                    'data_udp': document.getElementById('data_udp').value,
+                },
+                success: function (data) {
+                    if(data !== 'Error') {
+                        if(document.getElementById('empty_field'))
+                            document.getElementById('empty_field').remove();
+                        document.getElementById('packets_queue').innerHTML += "<span class=\"dropdown-item\" id=\""+data+"\" style=\"cursor: default\">"+data+"</span>";
+                        putNotification('Удачно', 'пакет сохранен', 'ok');
+                    }
+                    else
+                        putNotification('Ошибка','пакет не удалось сохранить','err');
+                },
+                beforeSend: function () {
+                    putNotification('Подождите','идет сохранение пакета','inf')
+                },
+                error: function () {
+                    putNotification('Ошибка','пакет не удалось сохранить','err')
+
+                }
+});
+                }
+                else if(proto === '2')
+                {
+                    $.ajax({
+                url: '/safePacket/',
+                method: 'get',
+                dataType : "html",
+                data: { 'version_ip': document.getElementById('version_ip').value,
+                    'len_ip': document.getElementById('len_ip').value,
+                    'type_service_ip': document.getElementById('type_service_ip').value,
+                    'all_len_ip': document.getElementById('version_ip').value,
+                    'id_ip': document.getElementById('id_ip').value,
+                    'flags_ip': document.getElementById('flags_ip').value,
+                    'offset_ip': document.getElementById('offset_ip').value,
+                    'ttl_ip': document.getElementById('ttl_ip').value,
+                    'num_ip': document.getElementById('num_ip').value,
+                    'crc_ip': document.getElementById('crc_ip').value,
+                    'src_ip': document.getElementById('src_ip').value,
+                    'dst_ip': document.getElementById('dst_ip').value,
+                    'type_of_protocol': document.getElementById('type_of_protocol').value,
+                    'type_icmp': document.getElementById('type_icmp').value,
+                    'code_icmp': document.getElementById('code_icmp').value,
+                    'crc_icmp': document.getElementById('crc_icmp').value,
+                    'data_icmp': document.getElementById('data_icmp').value,
+                },
+                success: function (data) {
+                    if(data !== 'Error') {
+                        if(document.getElementById('empty_field'))
+                            document.getElementById('empty_field').remove();
+                        document.getElementById('packets_queue').innerHTML += "<span onclick=\"choosePacket(this)\" class=\"dropdown-item\" id=\""+data+"\" style=\"cursor: pointer\">"+data+"</span>";
+                        putNotification('Удачно', 'пакет сохранен', 'ok');
+                    }
+                    else
+                        putNotification('Ошибка','пакет не удалось сохранить','err');
+                },
+                beforeSend: function () {
+                    putNotification('Подождите','идет сохранение пакета','inf')
+                },
+                error: function () {
+                    putNotification('Ошибка','пакет не удалось сохранить','err')
+
+                }
+});
+                }
+            }
+            else
+                putNotification('Ошибка','выберите TCP/UDP/ICMP','err')
+        }
+
+        function sendAll() {
+             $.ajax({
+                url: '/sendAll/',
+                method: 'post',
+                dataType : "html",
+                data: { 'interfaces_list': document.getElementById('interfaces_list').value,
+                },
+                success: function (data) {
+                    if(data !== 'Error')
+                    putNotification('Удачно','пакеты отправлены','ok');
+                    else
+                        putNotification('Ошибка','пакеты не удалось отправить','err');
+                },
+                beforeSend: function (xhr, settings) {
+                    if (!csrfSafeMethod(settings.type) && !this.crossDomain) {
+                        xhr.setRequestHeader("X-CSRFToken", csrftoken);
+                    }
+                    putNotification('Подождите','идет отправка пакетов','inf')
+                },
+                error: function () {
+                    putNotification('Ошибка','пакеты не удалось отправить','err')
+
+                }
+});
+        }
+        function delPacket() {
+            $.ajax({
+                url: '/delPacket/',
+                method: 'get',
+                dataType : "html",
+                data: { 'packet_name': packet_name,
+                },
+                success: function (data) {
+                    if(data !== 'Error') {
+                        document.getElementById(packet_name).remove();
+                        if ($('#packets_queue').find('*').length === 0)
+                        document.getElementById('packets_queue').innerHTML = "<span class=\"dropdown-item\" id=\"empty_field\" style=\"cursor: default\">Пусто</span>";
+                        putNotification('Удачно', 'пакет удален', 'ok');
+                    }
+                    else
+                        putNotification('Ошибка','пакет не удалось удалить','err');
+                },
+                beforeSend: function () {
+                    putNotification('Подождите','идет удаление пакета','inf')
+                },
+                error: function () {
+                    putNotification('Ошибка','пакет не удалось удалить','err')
+
+                }
+});
+        }
+        function putNotification(handle,text,type) {
+            document.getElementById("notifications").hidden = false;
+            if(type === 'err'){
+                document.getElementById("notifications").classList.remove('alert-success');
+                document.getElementById("notifications").classList.remove('alert-primary');
+                document.getElementById("notifications").classList.add('alert-danger');
+                document.getElementById("notifications").innerHTML = "<strong>"+handle+"</strong>, "+text;
+            }
+            else if(type === 'ok'){
+                document.getElementById("notifications").classList.add('alert-success');
+                document.getElementById("notifications").classList.remove('alert-primary');
+                document.getElementById("notifications").classList.remove('alert-danger');
+                document.getElementById("notifications").innerHTML = "<strong>"+handle+"</strong>, "+text;
+            }
+            else if(type === 'inf'){
+                document.getElementById("notifications").classList.remove('alert-success');
+                document.getElementById("notifications").classList.add('alert-primary');
+                document.getElementById("notifications").classList.remove('alert-danger');
+                document.getElementById("notifications").innerHTML = "<strong>"+handle+"</strong>, "+text;
+            }
+            setTimeout("document.getElementById(\"notifications\").hidden = true", 2500);
+        }
+    </script>
+</head>
+<body style="background-color: #17191f; color: white" >
+    <div style="position: absolute; bottom: 0; right: 0;">
+<div hidden id="notifications" class="alert alert-primary" role="alert">
+
+</div>
+</div>
+<div class="container">
+
+    <div class="row justify-content-md-center">
+    <form>
+    <div class="form-group">
+       <br>
+       <label for="interfaces_list"><b>Список сетевых интерфейсов:</b></label>
+        <select class="form-control" id="interfaces_list" name="interfaces_list">
+        {% for interface in interfaces%}
+            <option value="{{ interface }}">{{ interface }}</option>
+        {% endfor %}
+        </select>
+    </div>
+    <button type="button" onclick="refreshList()" class="btn btn-success"> Обновить</button>
+    <br><br>
+    <div id="ip_set" class="form-group" style="background-color: grey; padding: 10px; border-radius: 5px">
+        <label for="ip_set"><b>IP-заголовок</b></label>
+        <div class="row">
+            <div class="col"> <input onclick="mem_name=this.placeholder" onkeyup="validDigit(this)" class="form-control" id="version_ip" name="version_ip" placeholder="Версия"></div>
+            <div class="col"><input onclick="mem_name=this.placeholder" onkeyup="validDigit(this)" class="form-control" id="len_ip" name="len_ip" placeholder="Длина заголовка"></div>
+            <div class="col"><input title="0-2 - приоритет данного IP-сегмента
+3 - требование ко времени задержки передачи IP-сегмента (0 — нормальная, 1 — низкая задержка)
+4 - требование к пропускной способности маршрута, по которому должен отправляться IP-сегмент (0 — низкая, 1 — высокая пропускная способность)
+5 - требование к надежности передачи IP-сегмента (0 — нормальная, 1 — высокая надежность)
+6-7 - ECN, явное сообщение о задержке (управление IP-потоком)." onclick="mem_name=this.placeholder" onkeyup="validDigit(this)" class="form-control" id="type_service_ip" name="type_service_ip" placeholder="Тип сервиса"></div>
+            <div class="col"><input onclick="mem_name=this.placeholder" onkeyup="validDigit(this)" class="form-control" id="all_len_ip" name="all_len_ip" placeholder="Общая длина"></div>
+            <div class="col"><input onclick="mem_name=this.placeholder" onkeyup="validDigit(this)" class="form-control" id="offset_ip" name="offset_ip" placeholder="Смещение"></div>
+        </div>
+        <div class="row">
+            <div class="col"><div class="form-check"><input onchange="lockField(this)" type="checkbox" class="form-check-input" id="version_ip_check"><label class="form-check-label" for="version_ip_check">Автоматом (версия)</label></div></div>
+            <div class="col"><div class="form-check"><input onchange="lockField(this)" type="checkbox" class="form-check-input" id="len_ip_check"><label class="form-check-label" for="len_ip_check">Автоматом (длина заголовка)</label></div></div>
+            <div class="col"><div class="form-check"><input onchange="lockField(this)" type="checkbox" class="form-check-input" id="type_service_ip_check"><label class="form-check-label" for="type_service_ip_check">Автоматом (тип сервиса)</label></div></div>
+            <div class="col"><div class="form-check"><input onchange="lockField(this)" type="checkbox" class="form-check-input" id="all_len_ip_check"><label class="form-check-label" for="all_len_ip_check">Автоматом (общая длина)</label></div></div>
+            <div class="col"><div class="form-check"><input onchange="lockField(this)" type="checkbox" class="form-check-input" id="offset_ip_check"><label class="form-check-label" for="offset_ip_check">Автоматом (смещение)</label></div></div>
+        </div>
+        <br>
+        <div class="row">
+            <div class="col"><input onclick="mem_name=this.placeholder" onkeyup="validDigit(this)" class="form-control" id="id_ip" name="id_ip" placeholder="Идентификатор"></div>
+            <div class="col"><input title="1 - зарезервированный
+2 - DF
+4 - MF" onclick="mem_name=this.placeholder" onkeyup="validDigit(this)" class="form-control" id="flags_ip" name="flags_ip" placeholder="Флаги"></div>
+            <div class="col"><input onclick="mem_name=this.placeholder" onkeyup="validDigit(this)" class="form-control" id="ttl_ip" name="ttl_ip" placeholder="Время жизни"></div>
+            <div class="col"><input title="1 - ICMP
+6 - TCP
+17 - UDP" onclick="mem_name=this.placeholder" onkeyup="validDigit(this)" class="form-control" id="num_ip" name="num_ip" placeholder="Номер протокола"></div>
+            <div class="col"><input onclick="mem_name=this.placeholder" onkeyup="validDigit(this)" class="form-control" id="crc_ip" name="crc_ip" placeholder="Контрольная сумма"></div>
+        </div>
+        <div class="row">
+            <div class="col"><div class="form-check"><input onchange="lockField(this)" type="checkbox" class="form-check-input" id="id_ip_check"><label class="form-check-label" for="id_ip_check">Автоматом (идентификатор)</label></div></div>
+            <div class="col"><div class="form-check"><input onchange="lockField(this)" type="checkbox" class="form-check-input" id="flags_ip_check"><label class="form-check-label" for="flags_ip_check">Автоматом (флаги)</label></div></div>
+            <div class="col"><div class="form-check"><input onchange="lockField(this)" type="checkbox" class="form-check-input" id="ttl_ip_check"><label class="form-check-label" for="ttl_ip_check">Автоматом (время жизни)</label></div></div>
+            <div class="col"><div class="form-check"><input onchange="lockField(this)" type="checkbox" class="form-check-input" id="num_ip_check"><label class="form-check-label" for="num_ip_check">Автоматом (номер протокола)</label></div></div>
+            <div class="col"><div class="form-check"><input onchange="lockField(this)" type="checkbox" class="form-check-input" id="crc_ip_check"><label class="form-check-label" for="crc_ip_check">Автоматом (контрольная сумма)</label></div></div>
+
+        </div>
+        <br>
+        <div class="row">
+            <div class="col"><input onchange="isIP(this)" class="form-control" id="src_ip" name="src_ip" placeholder="IP адрес отправителя"></div>
+            <div class="col"><input onchange="isIP(this)" class="form-control" id="dst_ip" name="dst_ip" placeholder="IP адрес получателя"></div>
+        </div>
+    </div>
+    <div class="form-group">
+        <ul class="nav nav-tabs">
+        <li class="nav-item">
+        <a class="nav-link" id="TCP" style="cursor: pointer" onclick="showTCP(this)">TCP</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link" id="UDP" style="cursor: pointer" onclick="showUDP(this)">UDP</a>
+        </li>
+        <li class="nav-item">
+        <a class="nav-link" id="ICMP" style="cursor: pointer" onclick="showICMP(this)">ICMP</a>
+        </li>
+        </ul>
+        <input hidden id="type_of_protocol" name="type_of_protocol" value="-1"> <!-- -1 error,0-TCP,1-UDP,2-ICMP -->
+        <div id="protocol" style="padding: 10px; border-radius: 5px">
+
+        </div>
+    </div>
+    <button disabled id="send_btn" onclick="sendPacket()" type="button" class="btn btn-success">Отправить</button> <button type="button" class="btn btn-info" onclick="safePacket()">Сохранить</button> <button onclick="delPacket()" type="button" class="btn btn-danger">Удалить</button> <div class="btn-group dropup">
+  <button onclick="sendAll()" type="button" class="btn btn-secondary">
+    Атака по списку
+  </button>
+  <button type="button" class="btn btn-secondary dropdown-toggle dropdown-toggle-split" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <span class="sr-only">Toggle Dropright</span>
+  </button>
+  <div class="dropdown-menu" id="packets_queue">
+        {% if packets %}
+      {% for packet in packets %}
+        <span class="dropdown-item" id="{{ packet.name }}" style="cursor: pointer" onclick="choosePacket(this)">{{ packet.name }}</span>
+      {% endfor %}
+        {% else %}
+            <span class="dropdown-item" id="empty_field" style="cursor: default">Пусто</span>
+  {% endif %}
+  </div>
+</div>
+    </form>
+    </div>
+</div>
+</body>
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script
+  src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+</html>
